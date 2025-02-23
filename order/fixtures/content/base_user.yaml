@@ -1,0 +1,32 @@
+- model: auth.user
+  pk: 1
+  fields:
+    password: pbkdf2_sha256$24000$kCpFXOfvgYmM$E6hmqit5gifPmA+37K0l44zy9d2xwYgfhYlTh/TIGSY=
+    last_login: 2024-01-01T07:35:15.53+0330
+    is_superuser: true
+    username: test_user
+    first_name: 'testy firstname'
+    last_name: 'testy lastname'
+    email: 'testy@testy.com'
+    is_staff: true
+    is_active: true
+    date_joined: 2024-01-01T07:35:15.53+0330
+    groups: []
+    user_permissions: []
+
+- model: auth.user
+  pk: 2
+  fields:
+    password: pbkdf2_sha256$24000$kCpFXOfvgYmM$E6hmqit5gifPmA+37K0l44zy9d2xwYgfhYltH/TIGSY=
+    last_login: 2024-01-05T07:35:15.53+0330
+    is_superuser: true
+    username: test_foo_user
+    first_name: 'foo'
+    last_name: 'bar'
+    email: 'foobar@testy.com'
+    is_staff: true
+    is_active: true
+    date_joined: 2024-01-02T07:35:15.53+0330
+    groups: []
+    user_permissions: []
+
