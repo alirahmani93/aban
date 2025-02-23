@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  web:
+    build: .
+    command: sh -c "python manage.py migrate &&
+      yes | python manage.py collectstatic --no-input &&
+      gunicorn aban.wsgi:application --workers=${GUNICORN_WORKERS} --timeout=${GUNICORN_TIMEOUT} --bind 0.0.0.0:${GUNICORN_PORT}"
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:1.23.0-alpine
+    ports:
+      - 80:80
+      - 443:443
+      - 888:888
+    restart: unless-stopped
+    container_name: aban-nginx
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - ./nginx/conf/:/etc/nginx/conf.d/:rw
+      - ./nginx/templates/:/etc/nginx/templates/:ro
+      - ../certbot/www:/var/www/certbot/:ro
+      - ../certbot/conf/:/etc/nginx/ssl/:ro
+    env_file:
+      - ./.env
+    depends_on:
+      - web
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: aban-certbot
+    volumes:
+      - ../certbot/www/:/var/www/certbot/:rw
+      - ../certbot/conf/:/etc/letsencrypt/:rw
+
+    env_file:
+      - ./.env
+
+volumes:
+  database_volume:
+  static_volume:
+  media_volume:
